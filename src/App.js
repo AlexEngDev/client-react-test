@@ -14,9 +14,9 @@ const Chat = () => {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7202/chat")  //development localhost
+      //.withUrl("https://localhost:7202/chat")  //development localhost
       //.withUrl("http://localhost:5000/chat")   //production localhhost
-      //.withUrl("https://demo-livechat-388117a4a42f.herokuapp.com/chat")   //production
+      .withUrl("https://demo-livechat-388117a4a42f.herokuapp.com/chat")   //production
       .withAutomaticReconnect()
       .build();
 
