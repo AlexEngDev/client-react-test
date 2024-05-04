@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 
 
-
-
 const Chat = () => {
   const [connection, setConnection] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -16,7 +14,9 @@ const Chat = () => {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7202/chat")
+      //.withUrl("https://localhost:7202/chat")  //development localhost
+      //.withUrl("http://localhost:5000/chat")   //production localhhost
+      .withUrl("https://demo-livechat-388117a4a42f.herokuapp.com/chat")   //production
       .build();
 
     setConnection(newConnection);
@@ -40,16 +40,19 @@ const Chat = () => {
   const sendMessage = async () => {
     if (connection) {
       try {
-        const timestamp = new Date().toISOString();
-        if (userLocation) {
-          const latitude = userLocation.latitude.toString()
-          const longitude = userLocation.longitude.toString();
-          await connection.send('SendMessage', userInput, messageInput, timestamp, latitude, longitude);
-          return;
-        }
-        else {
-          await connection.send('SendMessage', userInput, messageInput, timestamp);
-        }
+        const timestamp = new Date().toISOString().toString();
+        await connection.send('SendMessage', userInput, messageInput, timestamp);
+        /*
+                if (userLocation) {
+                  const latitude = userLocation.latitude.toString()
+                  const longitude = userLocation.longitude.toString();
+                  await connection.send('SendMessage', userInput, messageInput, timestamp, latitude, longitude);
+                  return;
+                }
+                else {
+                  await connection.send('SendMessage', userInput, messageInput, timestamp);
+                }
+                */
       } catch (e) {
         console.error(e);
       }
