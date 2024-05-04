@@ -14,9 +14,10 @@ const Chat = () => {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      //.withUrl("https://localhost:7202/chat")  //development localhost
+      .withUrl("https://localhost:7202/chat")  //development localhost
       //.withUrl("http://localhost:5000/chat")   //production localhhost
-      .withUrl("https://demo-livechat-388117a4a42f.herokuapp.com/chat")   //production
+      //.withUrl("https://demo-livechat-388117a4a42f.herokuapp.com/chat")   //production
+      .withAutomaticReconnect()
       .build();
 
     setConnection(newConnection);
@@ -41,23 +42,19 @@ const Chat = () => {
     if (connection) {
       try {
         const timestamp = new Date().toISOString().toString();
-        await connection.send('SendMessage', userInput, messageInput, timestamp);
-        /*
-                if (userLocation) {
-                  const latitude = userLocation.latitude.toString()
-                  const longitude = userLocation.longitude.toString();
-                  await connection.send('SendMessage', userInput, messageInput, timestamp, latitude, longitude);
-                  return;
-                }
-                else {
-                  await connection.send('SendMessage', userInput, messageInput, timestamp);
-                }
-                */
+        if (userLocation) {
+          const latitude = userLocation.latitude.toString()
+          const longitude = userLocation.longitude.toString();
+          await connection.send('SendMessage', userInput, messageInput, timestamp, latitude, longitude);
+          return;
+        }
+
       } catch (e) {
         console.error(e);
       }
     }
   };
+
   const requestUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
@@ -96,7 +93,7 @@ const Chat = () => {
       <ul id="messagesList" style={{ listStyleType: 'none', padding: '0' }}>
         {messages.map((msg, index) => (
           <li key={index} style={{ backgroundColor: getMessageColor(index), padding: '10px', marginBottom: '5px', borderRadius: '5px' }}>
-            <strong>{msg.user}</strong>: {msg.message} - {msg.timestamp} - {msg.latitude && msg.longitude && `Latitude: ${msg.latitude}, Longitude: ${msg.longitude}`}
+            <strong>{msg.user}</strong>: {msg.message} - {msg.timestamp}  {msg.latitude && msg.longitude && `Latitude: ${msg.latitude}, Longitude: ${msg.longitude}`}
           </li>
         ))}
       </ul>
